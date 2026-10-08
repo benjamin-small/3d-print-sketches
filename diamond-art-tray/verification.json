@@ -1,0 +1,236 @@
+{
+  "units": "mm",
+  "parts": {
+    "01_tray": {
+      "size_mm": [
+        164.0,
+        67.8,
+        17.4
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 736,
+      "volume_cm3": 35.193,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "02_sliding_lid": {
+      "size_mm": [
+        170.65,
+        65.1,
+        4.2
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 114,
+      "volume_cm3": 15.388,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "03_spout_plug": {
+      "size_mm": [
+        20.4,
+        22.0,
+        12.3
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 28,
+      "volume_cm3": 3.433,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "optional/plug_relaxed_fit": {
+      "size_mm": [
+        20.4,
+        22.0,
+        12.3
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 28,
+      "volume_cm3": 3.367,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "optional/fit_test_tray_tracks": {
+      "size_mm": [
+        18.0,
+        67.8,
+        17.4
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 86,
+      "volume_cm3": 6.774,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "optional/fit_test_lid": {
+      "size_mm": [
+        25.0,
+        65.1,
+        4.2
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 78,
+      "volume_cm3": 2.934,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "optional/fit_test_spout": {
+      "size_mm": [
+        20.0,
+        20.0,
+        17.4
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 68,
+      "volume_cm3": 2.069,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    },
+    "optional/fit_test_spout_lid": {
+      "size_mm": [
+        19.65,
+        17.287,
+        1.6
+      ],
+      "watertight": true,
+      "consistent_winding": true,
+      "connected_solids": 1,
+      "triangles": 20,
+      "volume_cm3": 0.448,
+      "stl_roundtrip_verified": true,
+      "core_3mf_roundtrip_verified": true
+    }
+  },
+  "valleys": 14,
+  "valley_pitch_mm": 4.5,
+  "valley_flat_mm": 3.0,
+  "shelf_depth_mm": 20.0,
+  "shelf_top_mm": 3.3,
+  "ridge_top_mm": 3.3,
+  "ridge_height_above_floor_mm": 1.5,
+  "ridge_base_width_mm": 1.5,
+  "design_revision": 5,
+  "plug_style": "plain tapered block with T grip, matching photo reference",
+  "physical_print_tested": false,
+  "bambu_studio_slice_tested": false,
+  "lid_slide": {
+    "samples": 172,
+    "sample_step_mm": 1,
+    "max_collision_mm3": 0.0,
+    "lower_edge_side_clearance_mm": 0.3500000000000001,
+    "bottom_clearance_mm": 0.3000000000000007,
+    "max_seated_plug_collision_mm3": 0.0
+  },
+  "plug_seated_interference_mm3": -0.0,
+  "relaxed_plug_seated_interference_mm3": 0.0,
+  "standard_plug_retention": {
+    "lid_to_plug_top_clearance_mm": 0.2,
+    "bottom_clearance_mm": 0.0,
+    "upward_removal_without_lid_max_collision_mm3": 0.0,
+    "upward_removal_samples": 23,
+    "forward_8mm_blocked_overlap_mm3": 146.156607,
+    "sideways_1mm_blocked_overlap_mm3": 175.460946,
+    "upward_half_mm_with_lid_blocked_overlap_mm3": 66.764997
+  },
+  "relaxed_plug_retention": {
+    "lid_to_plug_top_clearance_mm": 0.2,
+    "bottom_clearance_mm": 0.0,
+    "upward_removal_without_lid_max_collision_mm3": 0.0,
+    "upward_removal_samples": 23,
+    "forward_8mm_blocked_overlap_mm3": 109.374062,
+    "sideways_1mm_blocked_overlap_mm3": 142.356656,
+    "upward_half_mm_with_lid_blocked_overlap_mm3": 65.168575
+  },
+  "spout_top_open_without_lid": true,
+  "spout_fit_coupon_capture_verified": true,
+  "measured_valley_bottoms_mm": [
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8,
+    1.8
+  ],
+  "measured_valley_flat_widths_mm": [
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001,
+    3.0001
+  ],
+  "measured_internal_ridge_tops_mm": [
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3,
+    3.3
+  ],
+  "measured_ridge_base_widths_mm": [
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999,
+    1.4999
+  ],
+  "measured_ridge_heights_above_floor_mm": [
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5
+  ]
+}
