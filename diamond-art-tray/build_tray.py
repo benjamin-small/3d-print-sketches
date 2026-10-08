@@ -24,7 +24,7 @@ LENGTH = 164.0
 HEIGHT = 17.4
 WALL = 2.4
 BASE = 1.8
-RIDGE_HEIGHT = 1.5
+RIDGE_HEIGHT = 1.0
 RIDGE_WIDTH = 1.5
 RIDGE_Z = BASE + RIDGE_HEIGHT
 ROWS = 14
@@ -279,7 +279,7 @@ def verify(parts, tray, lid, plug, relaxed, pitch):
               "valley_flat_mm": VALLEY_FLAT, "shelf_depth_mm": SHELF_DEPTH,
               "shelf_top_mm": RIDGE_Z, "ridge_top_mm": RIDGE_Z,
               "ridge_height_above_floor_mm": RIDGE_HEIGHT, "ridge_base_width_mm": RIDGE_WIDTH,
-              "design_revision": 5, "plug_style": "plain tapered block with T grip, matching photo reference",
+              "design_revision": 6, "plug_style": "plain tapered block with T grip, matching photo reference",
               "physical_print_tested": False, "bambu_studio_slice_tested": False}
     for name, solid in parts.items():
         mesh = mesh_of(solid)
@@ -380,7 +380,7 @@ def verify(parts, tray, lid, plug, relaxed, pitch):
     assert np.allclose(valley_z, BASE, atol=1e-4)
     assert np.allclose(valley_widths, 3.0, atol=0.001)
     assert np.allclose(ridge_z, RIDGE_Z, atol=1e-4)
-    assert np.allclose(np.array(ridge_z)-BASE, 1.5, atol=1e-4)
+    assert np.allclose(np.array(ridge_z)-BASE, RIDGE_HEIGHT, atol=1e-4)
     assert np.allclose(ridge_widths, 1.5, atol=0.001)
     shelf_ray = cube([12, WIDTH/2 - 0.001, 0], [12.002, WIDTH/2 + 0.001, 8])
     assert abs(mesh_of(tray & shelf_ray).bounds[1, 2] - RIDGE_Z) < 1e-4
@@ -469,7 +469,7 @@ def preview(tray, lid, plug):
     ax2.annotate("Plain open spout", xy=(155,WIDTH/2), xytext=(132,-25),
                  arrowprops={"arrowstyle":"->", "color":"#34565d"}, color="#23474d", ha="center")
     fig.text(0.04,0.94,"Diamond art sorting tray",fontsize=25,fontweight="bold",color="#123d43")
-    fig.text(0.04,0.90,"Revision 5  ·  164 × 67.8 mm  ·  14 valleys, each 3 mm across",fontsize=13,color="#486269")
+    fig.text(0.04,0.90,"Revision 6  ·  164 × 67.8 mm  ·  14 valleys, each 3 mm across  ·  1 mm ridge height",fontsize=13,color="#486269")
     fig.text(0.04,0.13,"Exploded assembly",fontsize=13,fontweight="bold",color="#123d43")
     fig.text(0.04,0.095,"Slide the lid back, then lift out the stopper using its T-shaped grip.",color="#486269")
     fig.text(0.04,0.052,"CAD preview • clearances verified digitally • physical fit requires a test print",fontsize=10,color="#687d81")
@@ -538,8 +538,8 @@ def main():
         for filename in ["README.md", "build_tray.py", "requirements.txt", "diamond-art-tray.scad", "tray-preview.png", "spout-fit-preview.png", "verification.json"]:
             if (ROOT / filename).exists():
                 archive.write(ROOT / filename, filename)
-    # A distinct download name avoids confusing the new plug system with v1.
-    (ROOT/"diamond-art-tray-v5-print-pack.zip").write_bytes((ROOT/"diamond-art-tray-print-pack.zip").read_bytes())
+    # A distinct download name identifies the current geometry revision.
+    (ROOT/"diamond-art-tray-v6-print-pack.zip").write_bytes((ROOT/"diamond-art-tray-print-pack.zip").read_bytes())
     print(json.dumps(report, indent=2))
 
 
