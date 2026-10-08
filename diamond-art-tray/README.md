@@ -20,7 +20,7 @@ Extract **diamond-art-tray-v5-print-pack.zip**, then import these three parts se
 | Sliding lid | 02_sliding_lid | 170.65 × 65.1 × 4.2 |
 | T-shaped stopper | 03_spout_plug | 20.4 × 22 × 12.3 |
 
-**Use the new narrower tray and matching lid from revision 5.** Earlier lids are too wide for this tray. The stopper retains the same dimensions and design, and an export is included in this pack. The generic print-pack ZIP also contains revision 5; the revision-4 ZIP remains available as the prior version.
+**Use the matching tray, lid, and stopper from revision 5.** The generic print-pack ZIP also contains revision 5.
 
 Bambu Studio supports STL and 3MF files; see its [official documentation](https://github.com/bambulab/BambuStudio/wiki/Command-Line-Usage). The 3MFs contain geometry and millimeter units, with no printer or filament presets. Each part fits within a 180 mm build volume; Bambu's A1 mini has a [180 × 180 × 180 mm build volume](https://cdn1.bambulab.com/documentation/quick-start-f507128172bdf/Quick%20start%20guide%20-%20A1%20mini-EN.pdf). Print the tray and lid on separate plates if needed.
 
