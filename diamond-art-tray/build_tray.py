@@ -29,10 +29,12 @@ RIDGE_WIDTH = 1.5
 RIDGE_Z = BASE + RIDGE_HEIGHT
 ROWS = 14
 SHELF_DEPTH = 20.0
+SHELF_RAMP_LENGTH = 4.0
 VALLEY_FLAT = 3.0
 # Fourteen valley flats plus thirteen full ridges and two half ridges.
 WIDTH = 2 * WALL + ROWS * (VALLEY_FLAT + RIDGE_WIDTH)
 RIDGE_TOP_WIDTH = 0.4
+RIDGE_SHOULDER_RADIUS = 0.2
 RIDGE_END = 112.0
 RIDGE_RAMP_END = 118.0
 SPOUT_OUTER_WIDTH = 16.0
@@ -140,6 +142,29 @@ def normalize(solid):
     return solid.translate((-lo).tolist())
 
 
+def ridge_profile(y):
+    """Round the two upper trapezoid corners inward; retain base width/height.
+
+    Eight arc segments per shoulder approximate a tangent 0.2 mm fillet.
+    The original sloped sides and floor contact remain unchanged.
+    """
+    run = (RIDGE_WIDTH - RIDGE_TOP_WIDTH) / 2
+    slope_length = np.hypot(run, RIDGE_HEIGHT)
+    normal_angle = np.arctan2(run, RIDGE_HEIGHT)
+    tangent_length = RIDGE_SHOULDER_RADIUS * np.tan((np.pi/2-normal_angle)/2)
+    center_y = RIDGE_TOP_WIDTH/2 - tangent_length
+    center_z = RIDGE_HEIGHT - RIDGE_SHOULDER_RADIUS
+    assert center_y > 0 and tangent_length < slope_length
+    right_arc = [[center_y + RIDGE_SHOULDER_RADIUS*np.cos(a),
+                  center_z + RIDGE_SHOULDER_RADIUS*np.sin(a)]
+                 for a in np.linspace(normal_angle, np.pi/2, 9)]
+    return ([[y-RIDGE_WIDTH/2, BASE-EPS], [y+RIDGE_WIDTH/2, BASE-EPS],
+             [y+RIDGE_WIDTH/2, BASE]] +
+            [[y+yy, BASE+zz] for yy, zz in right_arc] +
+            [[y-yy, BASE+zz] for yy, zz in reversed(right_arc)] +
+            [[y-RIDGE_WIDTH/2, BASE]])
+
+
 def build():
     center = WIDTH / 2
     n0, n1 = center - SPOUT_OUTER_WIDTH / 2, center + SPOUT_OUTER_WIDTH / 2
@@ -158,15 +183,21 @@ def build():
     tray = extrude(outer, 0, HEIGHT) - extrude(inner + neck_void, BASE, HEIGHT + 1)
     shelf_end = WALL + SHELF_DEPTH
     tray += cube([WALL - EPS, WALL - EPS, BASE - EPS], [shelf_end, WIDTH - WALL + EPS, RIDGE_Z])
+    # Preserve the full flat shelf, then descend 1 mm over 4 mm into the valleys.
+    tray += hull([[x, yy, BASE-EPS]
+                  for x in (shelf_end-EPS, shelf_end+SHELF_RAMP_LENGTH)
+                  for yy in (WALL-EPS, WIDTH-WALL+EPS)] +
+                 [[x, yy, RIDGE_Z] for x in (shelf_end-EPS, shelf_end)
+                  for yy in (WALL-EPS, WIDTH-WALL+EPS)] +
+                 [[shelf_end+SHELF_RAMP_LENGTH, yy, BASE]
+                  for yy in (WALL-EPS, WIDTH-WALL+EPS)])
     pitch = (WIDTH - 2 * WALL) / ROWS
     ridge_base = RIDGE_WIDTH
     profiles = []
     # 13 internal ridges + two wall-adjacent half ridges enclose 14 valleys.
     for i in range(ROWS + 1):
         y = WALL + i * pitch
-        profile = [[y - ridge_base / 2, BASE - EPS], [y + ridge_base / 2, BASE - EPS],
-                   [y + ridge_base / 2, BASE], [y + RIDGE_TOP_WIDTH / 2, RIDGE_Z],
-                   [y - RIDGE_TOP_WIDTH / 2, RIDGE_Z], [y - ridge_base / 2, BASE]]
+        profile = ridge_profile(y)
         profiles.append(profile)
         ridge = prism_yz(profile, shelf_end - EPS, RIDGE_END)
         ramp = hull([[RIDGE_END - EPS, yy, zz] for yy, zz in profile] +
@@ -279,7 +310,9 @@ def verify(parts, tray, lid, plug, relaxed, pitch):
               "valley_flat_mm": VALLEY_FLAT, "shelf_depth_mm": SHELF_DEPTH,
               "shelf_top_mm": RIDGE_Z, "ridge_top_mm": RIDGE_Z,
               "ridge_height_above_floor_mm": RIDGE_HEIGHT, "ridge_base_width_mm": RIDGE_WIDTH,
-              "design_revision": 6, "plug_style": "plain tapered block with T grip, matching photo reference",
+              "ridge_shoulder_radius_mm": RIDGE_SHOULDER_RADIUS,
+              "shelf_ramp_length_mm": SHELF_RAMP_LENGTH,
+              "design_revision": 7, "plug_style": "plain tapered block with T grip, matching photo reference",
               "physical_print_tested": False, "bambu_studio_slice_tested": False}
     for name, solid in parts.items():
         mesh = mesh_of(solid)
@@ -384,6 +417,39 @@ def verify(parts, tray, lid, plug, relaxed, pitch):
     assert np.allclose(ridge_widths, 1.5, atol=0.001)
     shelf_ray = cube([12, WIDTH/2 - 0.001, 0], [12.002, WIDTH/2 + 0.001, 8])
     assert abs(mesh_of(tray & shelf_ray).bounds[1, 2] - RIDGE_Z) < 1e-4
+    # Measure the new ramp in all fourteen channels, including both endpoints.
+    ramp_heights = []
+    for fraction in np.linspace(0, 1, 5):
+        xx = WALL + SHELF_DEPTH + fraction*SHELF_RAMP_LENGTH
+        row = []
+        for i in range(ROWS):
+            yy = WALL + (i+0.5)*pitch
+            ray = cube([xx-0.00001, yy-0.00001, 0], [xx+0.00001, yy+0.00001, 8])
+            row.append(float(mesh_of(tray & ray).bounds[1, 2]))
+        expected = RIDGE_Z - fraction*RIDGE_HEIGHT
+        assert np.allclose(row, expected, atol=1e-4), "Shelf ramp is not continuous across valleys"
+        ramp_heights.append(np.round(row, 4).tolist())
+    # Probe both shoulders of all thirteen internal ridges against the fillet
+    # circle. The mesh is faceted, so allow 0.002 mm chord approximation error.
+    run = (RIDGE_WIDTH-RIDGE_TOP_WIDTH)/2
+    normal_angle = np.arctan2(run, RIDGE_HEIGHT)
+    center_y = RIDGE_TOP_WIDTH/2 - RIDGE_SHOULDER_RADIUS*np.tan((np.pi/2-normal_angle)/2)
+    shoulder_errors = []
+    for i in range(1, ROWS):
+        for sign in (-1, 1):
+            for angle in np.linspace(normal_angle, np.pi/2, 5)[1:-1]:
+                yy = WALL+i*pitch + sign*(center_y+RIDGE_SHOULDER_RADIUS*np.cos(angle))
+                zz = RIDGE_Z-RIDGE_SHOULDER_RADIUS+RIDGE_SHOULDER_RADIUS*np.sin(angle)
+                ray = cube([60, yy-0.00001, 0], [60.002, yy+0.00001, 8])
+                actual = float(mesh_of(tray & ray).bounds[1, 2])
+                shoulder_errors.append(abs(actual-zz))
+                sharp_top = min(RIDGE_Z, BASE+(RIDGE_WIDTH/2-abs(yy-(WALL+i*pitch)))*RIDGE_HEIGHT/run)
+                assert actual < sharp_top-0.001, "Shoulder retained a sharp corner"
+    assert max(shoulder_errors) < 0.002, "Rounded shoulders deviate from intended circle"
+    result["shelf_ramp_measured_channel_heights_mm"] = ramp_heights
+    result["rounded_shoulders"] = {"probe_samples": len(shoulder_errors),
+                                   "max_circle_error_mm": round(max(shoulder_errors), 6),
+                                   "flat_crest_width_mm": round(2*center_y, 4)}
     result["measured_valley_bottoms_mm"] = np.round(valley_z, 3).tolist()
     result["measured_valley_flat_widths_mm"] = np.round(valley_widths, 4).tolist()
     result["measured_internal_ridge_tops_mm"] = np.round(ridge_z, 3).tolist()
@@ -469,9 +535,10 @@ def preview(tray, lid, plug):
     ax2.annotate("Plain open spout", xy=(155,WIDTH/2), xytext=(132,-25),
                  arrowprops={"arrowstyle":"->", "color":"#34565d"}, color="#23474d", ha="center")
     fig.text(0.04,0.94,"Diamond art sorting tray",fontsize=25,fontweight="bold",color="#123d43")
-    fig.text(0.04,0.90,"Revision 6  ·  164 × 67.8 mm  ·  14 valleys, each 3 mm across  ·  1 mm ridge height",fontsize=13,color="#486269")
+    fig.text(0.04,0.90,"Revision 7  ·  14 valleys, each 3 mm across  ·  1 mm ridges with rounded shoulders",fontsize=13,color="#486269")
     fig.text(0.04,0.13,"Exploded assembly",fontsize=13,fontweight="bold",color="#123d43")
     fig.text(0.04,0.095,"Slide the lid back, then lift out the stopper using its T-shaped grip.",color="#486269")
+    fig.text(0.04,0.073,"Rounded ridge shoulders · 4 mm ramp from the rear shelf into the valleys",color="#486269")
     fig.text(0.04,0.052,"CAD preview • clearances verified digitally • physical fit requires a test print",fontsize=10,color="#687d81")
     fig.savefig(ROOT / "tray-preview.png", dpi=170, facecolor=fig.get_facecolor())
     plt.close(fig)
@@ -539,7 +606,7 @@ def main():
             if (ROOT / filename).exists():
                 archive.write(ROOT / filename, filename)
     # A distinct download name identifies the current geometry revision.
-    (ROOT/"diamond-art-tray-v6-print-pack.zip").write_bytes((ROOT/"diamond-art-tray-print-pack.zip").read_bytes())
+    (ROOT/"diamond-art-tray-v7-print-pack.zip").write_bytes((ROOT/"diamond-art-tray-print-pack.zip").read_bytes())
     print(json.dumps(report, indent=2))
 
 
