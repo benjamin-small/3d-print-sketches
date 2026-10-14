@@ -118,7 +118,20 @@ class TrayTests(unittest.TestCase):
         finally:
             cad.OUT = temporary_out
         published = json.loads((SOURCE / "verification.json").read_text())
-        self.assertEqual(report, published)
+        for field in ("units", "design_revision", "valleys", "valley_pitch_mm",
+                      "valley_flat_mm", "shelf_depth_mm", "ridge_height_above_floor_mm",
+                      "physical_print_tested", "bambu_studio_slice_tested"):
+            self.assertEqual(report[field], published[field], field)
+        self.assertEqual(set(report["parts"]), set(published["parts"]))
+        for name, part in report["parts"].items():
+            recorded = published["parts"][name]
+            np.testing.assert_allclose(part["size_mm"], recorded["size_mm"], atol=0.001, rtol=0)
+            self.assertAlmostEqual(part["volume_cm3"], recorded["volume_cm3"], delta=0.001)
+            for field in ("watertight", "consistent_winding", "connected_solids",
+                          "stl_roundtrip_verified", "core_3mf_roundtrip_verified"):
+                self.assertEqual(part[field], recorded[field], f"{name}: {field}")
+        # Facet counts and tiny boolean-overlap residuals can vary by platform.
+        # verify() still applies the same geometry and collision tolerances.
         pack = (SOURCE / "diamond-art-tray-v7-print-pack.zip").read_bytes()
         self.assertEqual(pack, (SOURCE / "diamond-art-tray-print-pack.zip").read_bytes())
         with zipfile.ZipFile(io.BytesIO(pack)) as archive:
