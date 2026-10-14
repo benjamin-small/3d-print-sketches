@@ -19,3 +19,27 @@ Download the [revision 7 print pack](diamond-art-tray/diamond-art-tray-v7-print-
 The models pass digital geometry and clearance checks. Physical print fit and Bambu Studio slicing are still unverified.
 
 Each design lives in its own subdirectory so its source, documentation, previews, and printable files stay together.
+
+## Setup and usage
+
+Use **Python 3.14** to rebuild the CAD or run tests. From the repository root:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m coverage run -m unittest discover -s tests -v
+.venv/bin/python -m coverage report
+```
+
+To regenerate the tray, run `../.venv/bin/python build_tray.py` from
+`diamond-art-tray/`. This replaces the current exports and print packs; tests
+build into temporary directories. Downloading and importing the existing print
+pack does not require Python.
+
+See [testing and coverage](TESTING.md), [configuration](CONFIGURATION.md),
+[contributing](CONTRIBUTING.md), and [revision policy](docs/releases.md).
+
+## License
+
+Source, design files, model exports, previews, and documentation are available
+under the [MIT license](LICENSE). Include the license when redistributing them.

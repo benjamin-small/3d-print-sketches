@@ -1,0 +1,2 @@
+-r diamond-art-tray/requirements.txt
+coverage==7.16.2
