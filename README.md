@@ -1,6 +1,7 @@
 # 3D print sketches
 
-A collection of printable designs, with source files, model exports, and notes for rebuilding them.
+This repository provides printable 3D designs, with source files, model exports,
+and notes for rebuilding them.
 
 My daughter loves diamond art and asked me to design a sorting tray for her. That request started this collection and its first project, the diamond art tray.
 
