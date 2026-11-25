@@ -12,7 +12,7 @@ python3 -m venv .venv
 
 Measured on 2026-11-25 with Python 3.14 and coverage.py 7.16.2: **99.4%
 statement coverage** of `diamond-art-tray/build_tray.py` and
-`train-track/build_track.py` together (670 of 674 statements), with **16 passing
+`train-track/build_track.py` together (677 of 681 statements), with **16 passing
 tests**. The terminal report rounds this to 99%. `.coveragerc` requires at least
 95%; CI measures the same sources and uploads `coverage.xml`.
 Re-run the commands and update this baseline when source or test scope changes.
@@ -40,7 +40,8 @@ Train track (`tests/test_train_track.py`):
 - Rebuild both parts and check they are single watertight bodies with the
   expected extents.
 - Check knob and socket clearances: printed-to-printed, and printed against the
-  photo-estimated green connector.
+  caliper-measured green connector. Check that each knob catches on the socket
+  lip when pulled 2 mm back out.
 - Check that a seated joint has zero overlap and that pulling it 3 mm apart
   collides. Check end-to-end 180° symmetry and knob-left handedness.
 - Run `main()` into a temporary directory and check the STL, millimeter 3MF,
@@ -57,8 +58,8 @@ The suite executes `main()` directly, including rendering and packaging.
 Tests cover the current default dimensions. They do not validate Bambu Studio or
 OrcaSlicer import/slicing, printer settings, physical fit, warping, durability,
 sorting performance, or an independent OpenSCAD render. Train-track checks
-against the green piece use photo-based estimates (about ±1 mm), not
-measurements of the real part. These require separate
+against the green piece use caliper measurements; the green knob's neck
+position is assumed, not measured. These require separate
 checks. `physical_print_tested` and `bambu_studio_slice_tested` remain false.
 
 GitHub's `CAD tests` check runs this suite on Linux/Python 3.14 for pull requests

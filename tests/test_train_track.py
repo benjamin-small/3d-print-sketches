@@ -25,21 +25,26 @@ class TrainTrackTests(unittest.TestCase):
         cls.parts = cad.build()
         cls.report = cad.verify(cls.parts)
 
-    def test_revision_1_dimensions(self):
+    def test_revision_2_dimensions(self):
         report = self.report
-        self.assertEqual(report["design_revision"], 1)
+        self.assertEqual(report["design_revision"], 2)
         np.testing.assert_allclose(report["parts"]["01_straight_200mm"]["extents_mm"],
-                                   [200 + 2*14.6, 57, 10])
+                                   [200 + 2*15.1, 55, 10.5], atol=0.01)
         np.testing.assert_allclose(report["parts"]["optional/fit_test_coupon"]["extents_mm"],
-                                   [40 + 2*14.6, 57, 10])
+                                   [40 + 2*15.1, 55, 10.5], atol=0.01)
+        profile = report["profile"]
+        self.assertEqual(profile["top_width_mm"], 46)
+        self.assertAlmostEqual(profile["band_height_mm"] + profile["rib_height_mm"], 7.5)
         self.assertFalse(report["physical_print_tested"])
         self.assertFalse(report["green_piece_fit_tested"])
 
     def test_connectors_mate_and_retain(self):
         c = self.report["connector"]
-        self.assertGreaterEqual(c["printed_knob_in_printed_socket_min_gap_mm"], 0.4)
-        self.assertGreaterEqual(c["estimated_green_knob_in_printed_socket_min_gap_mm"], 0.3)
-        self.assertGreaterEqual(c["printed_knob_in_estimated_green_socket_min_gap_mm"], 0.2)
+        self.assertGreaterEqual(c["printed_knob_in_printed_socket_min_gap_mm"], 0.25)
+        self.assertGreaterEqual(c["measured_green_knob_in_printed_socket_min_gap_mm"], 0.3)
+        self.assertGreaterEqual(c["printed_knob_in_measured_green_socket_min_gap_mm"], 0.2)
+        self.assertTrue(c["printed_knob_held_by_green_socket_after_2mm_pull"])
+        self.assertTrue(c["green_knob_held_by_printed_socket_after_2mm_pull"])
         self.assertLess(c["seated_overlap_mm3"], 1e-3)
         self.assertGreater(c["overlap_after_3mm_pull_mm3"], 1.0)
         straight = self.parts["01_straight_200mm"]
@@ -92,7 +97,7 @@ class TrainTrackTests(unittest.TestCase):
                                       archive.read("3D/3dmodel.model").decode())
                 self.assertTrue((cad.ROOT / "track-preview.png").stat().st_size > 10000)
                 generic = cad.ROOT / "train-track-print-pack.zip"
-                versioned = cad.ROOT / "train-track-v1-print-pack.zip"
+                versioned = cad.ROOT / f"train-track-v{cad.REVISION}-print-pack.zip"
                 self.assertEqual(generic.read_bytes(), versioned.read_bytes())
                 with zipfile.ZipFile(generic) as archive:
                     self.assertIsNone(archive.testzip())

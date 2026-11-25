@@ -10,7 +10,7 @@ My daughter loves diamond art and asked me to design a sorting tray for her. Tha
 | Project | Description |
 |---|---|
 | [Diamond art tray](diamond-art-tray/README.md) | A sorting tray with 14 valleys, a flat rear shelf, a pouring spout with a tapered stopper, and a sliding lid. |
-| [Train track](train-track/README.md) | A 200 mm straight with a fit-test coupon, sized from ruler-scaled photos to connect to a lime-green curved toy-train track piece. |
+| [Train track](train-track/README.md) | A 200 mm straight with a fit-test coupon, sized from caliper measurements to connect to a lime-green curved toy-train track piece. |
 
 The current tray has 3 mm-wide valley bottoms and ridges that are 1 mm tall and 1.5 mm wide at the base. Rounded ridge shoulders and a gentle ramp from the rear shelf are intended to help the drills shuffle and settle flat-side down. Its footprint is 164 × 67.8 mm.
 

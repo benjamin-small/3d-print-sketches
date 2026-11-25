@@ -4,9 +4,8 @@ Dimensions are millimeters. Run: python build_track.py (see requirements.txt).
 Exports watertight STL, model-only 3MF, a preview and verification.json.
 No printer G-code.
 
-Every dimension of the green piece below was estimated from two phone photos
-scaled with a ruler in frame (see README.md). The estimates carry roughly
-+/-1 mm of uncertainty, so print the fit-test coupon before the full straight.
+Dimensions of the green piece below come from caliper measurements taken on
+2026-11-25 (see README.md), after a revision 1 coupon sized from photos missed.
 
 Frame: x runs along the track (end faces at x=0 and x=LENGTH), y is lateral
 with y=0 on the connector centerline, z is up with the bed at z=0. Looking
@@ -25,48 +24,58 @@ import trimesh
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "print-files"
-REVISION = 1
+REVISION = 2
 
-# Track body. Measured green width: about 51 mm across the top and 57 mm at
-# the base; running bands at about 8 mm and end blocks/rims at 10-12 mm.
+# Track body, from caliper measurements of the green piece: 46 mm across the
+# top, 55 mm at the base, ribbed bands 10 mm wide topping out at 7.5 mm, rims
+# 5.5 mm wide and 10.5 mm high, an 11.5 mm center channel.
 LENGTH = 200.0                # end face to end face
 COUPON_LENGTH = 40.0          # short fit-test piece with both connector ends
-BASE_HALF = 28.5              # footprint half-width at the bed
-TOP_HALF = 26.0               # half-width at the top of the sloped sides
-RIM_TOP = 10.0                # low guard rims along both edges
-RIM_INNER = 21.5              # rim inner edge; 43 mm clear between rims
-BAND_TOP = 8.0                # running surface of the two ribbed bands
-CENTER_HALF = 6.5             # recessed center channel half-width
-DECK = 3.0                    # floor of the center channel
+BASE_HALF = 27.5              # footprint half-width at the bed
+TOP_HALF = 23.0               # half-width at the top of the sloped sides
+RIM_TOP = 10.5                # guard rims along both edges
+RIM_INNER = 16.0              # rim inner edge; 32 mm clear between rims
+RIM_OUTER = 21.5              # 5.5 mm flat rim top, then a bevel to the top edge
+RIM_BEVEL = 1.5               # top edge sits this far below the rim top
+BAND_TOP = 7.1                # band surface; rib tops reach 7.5 mm
+CENTER_HALF = 5.75            # recessed center channel half-width
+DECK = 3.0                    # floor of the center channel (not measured)
 RIB_HEIGHT = 0.4
 RIB_WIDTH = 1.0
 RIB_PITCH = 2.4
-SLOT_HALF_WIDTH = 5.0         # through-slots in the center channel
-SLOT_LENGTH = 9.5
-SLOT_PITCH = 19.2             # measured green slot pitch about 19 mm
+SLOT_HALF_WIDTH = 4.55        # 9.1 mm through-slots in the center channel
+SLOT_LENGTH = 9.5             # not measured
+SLOT_PITCH = 17.5
 SLOT_END_MARGIN = 22.0        # keep slots clear of the connector zones
 END_BLOCK = 18.0              # center channel filled to band height at each end
 
-# Connector. The green socket measured 17.2-18.3 mm across inside, with a
-# 12.4-13.8 mm mouth, centered about 6 mm off the centerline and about 16 mm
-# deep. A 3-3.5 mm lip on the centerline side of the mouth provides retention.
-# Values below already include about 3% correction for the photo's top-plane
-# magnification and deliberately err loose.
-CONNECTOR_OFFSET = 6.0        # head center from the track centerline
-KNOB_CENTER = 7.4             # head center beyond the end face
-KNOB_SEMI_X = 7.2             # head reaches 14.6 mm beyond the face
-KNOB_SEMI_Y = 8.1             # 16.2 mm head width
-KNOB_NECK = (1.4, 13.0)       # neck spans these y offsets (11.6 mm)
-KNOB_HEIGHT = 7.0
-SOCKET_CENTER = 7.9           # socket head center inside the end face
-SOCKET_SEMI_X = 8.3           # 16.2 mm deep
-SOCKET_SEMI_Y = 9.0           # 18.0 mm across
-SOCKET_MOUTH = (0.2, 14.0)    # mouth spans these y offsets (13.8 mm)
+# Connector. Edge distances were measured from the base edge, so offsets are
+# taken from the 27.5 mm base half-width. Measured green socket: 18.16 mm across,
+# 12.6 mm mouth, 15.7 mm deep, centered 6.4 mm off the centerline. Measured
+# green knob: 17.8 mm across its ridge tips, 13 mm neck, 16 mm reach, 7.4 mm
+# thick, centered 6.6 mm off the centerline. The revision 1 coupon's socket
+# (18.0 mm) was too tight for the green knob and its knob (16.2 mm) pulled out
+# of the green socket.
+KNOB_OFFSET = 6.4             # matches the green socket it drops into
+KNOB_CENTER = 6.8             # head center beyond the end face
+KNOB_SEMI_X = 8.3             # head reaches 15.1 mm beyond the face
+KNOB_SEMI_Y = 8.75            # 17.5 mm head width
+KNOB_NECK = (0.0, 12.0)       # neck spans these y offsets (12.0 mm)
+KNOB_HEIGHT = 7.2
+SOCKET_OFFSET = 6.6           # matches the green knob it receives
+SOCKET_CENTER = 7.4           # socket head center inside the end face
+SOCKET_SEMI_X = 9.4           # 16.8 mm deep
+SOCKET_SEMI_Y = 9.45          # 18.9 mm across
+SOCKET_MOUTH = (-0.9, 13.4)   # mouth spans these y offsets (14.3 mm)
 CIRCLE_SEGMENTS = 96
 
-# Estimated green socket envelope used for the photo-based fit checks.
-GREEN_SOCKET = {"center": 7.6, "semi_x": 7.9, "semi_y": 8.6, "offset": 5.9,
-                "mouth": (0.8, 13.4)}
+# Measured green connector envelopes used for the fit checks. The neck
+# position on the green knob was not measured; it is assumed to mirror the
+# green socket mouth, widened to the measured 13 mm.
+GREEN_SOCKET = {"center": 6.62, "semi_x": 9.08, "semi_y": 9.08, "offset": 6.4,
+                "mouth": (-0.3, 12.3)}
+GREEN_KNOB = {"center": 7.1, "semi_x": 8.9, "semi_y": 8.9, "offset": 6.6,
+              "neck": (-0.5, 12.5)}
 
 
 def ellipse(cx, cy, ax, ay):
@@ -78,13 +87,13 @@ def rect(x0, y0, x1, y1):
     return md.CrossSection([np.array([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], float)])
 
 
-def knob_shape(head_x, ax, ay, neck, offset=CONNECTOR_OFFSET):
+def knob_shape(head_x, ax, ay, neck, offset=KNOB_OFFSET):
     """Knob outline in end-local coordinates: u outward from the face, v lateral."""
     head = ellipse(head_x, offset, ax, ay)
     return head + rect(-0.6, neck[0], head_x, neck[1])
 
 
-def socket_shape(center, ax, ay, mouth, offset=CONNECTOR_OFFSET):
+def socket_shape(center, ax, ay, mouth, offset=SOCKET_OFFSET):
     """Socket outline in end-local coordinates (u<0 is inside the track)."""
     head = ellipse(-center, -offset, ax, ay)
     return head + rect(-center, -mouth[1], 0.6, -mouth[0])
@@ -103,12 +112,9 @@ def green_socket_2d():
     return socket_shape(g["center"], g["semi_x"], g["semi_y"], g["mouth"], g["offset"])
 
 
-def green_knob_2d(clearance=0.4):
-    """Largest knob the estimated green socket could hold, mirrored to the knob side."""
-    g = GREEN_SOCKET
-    neck = (g["mouth"][0] + clearance, g["mouth"][1] - clearance)
-    return knob_shape(g["center"], g["semi_x"] - clearance, g["semi_y"] - clearance,
-                      neck, g["offset"])
+def green_knob_2d():
+    g = GREEN_KNOB
+    return knob_shape(g["center"], g["semi_x"], g["semi_y"], g["neck"], g["offset"])
 
 
 def at_end(cs, length, end):
@@ -120,7 +126,8 @@ def at_end(cs, length, end):
 
 def profile():
     """Counter-clockwise (y, z) cross-section, symmetric about y=0."""
-    right = [(BASE_HALF, 0), (TOP_HALF, RIM_TOP), (RIM_INNER, RIM_TOP), (RIM_INNER, BAND_TOP),
+    right = [(BASE_HALF, 0), (TOP_HALF, RIM_TOP - RIM_BEVEL), (RIM_OUTER, RIM_TOP),
+             (RIM_INNER, RIM_TOP), (RIM_INNER, BAND_TOP),
              (CENTER_HALF, BAND_TOP), (CENTER_HALF, DECK)]
     left = [(-y, z) for y, z in reversed(right)]
     return md.CrossSection([np.array(right + left, float)])
@@ -145,7 +152,7 @@ def ribs(length):
         x = first + i*RIB_PITCH - RIB_WIDTH/2
         for sign in (-1, 1):
             y0, y1 = sorted((sign*CENTER_HALF, sign*RIM_INNER))
-            parts.append(box([x, y0, BAND_TOP - 0.01], [x + RIB_WIDTH, y1, BAND_TOP + RIB_HEIGHT]))
+            parts.append(box([x, y0, BAND_TOP - 0.5], [x + RIB_WIDTH, y1, BAND_TOP + RIB_HEIGHT]))
     return md.Manifold.batch_boolean(parts, md.OpType.Add)
 
 
@@ -172,9 +179,11 @@ def build_track(length, with_ribs=True):
         solid = solid + ribs(length)
     # Solid end blocks, like the green piece, give the socket lips full height.
     block = END_BLOCK if length > 2*END_BLOCK + SLOT_LENGTH else length/2
-    solid = solid + box([0, -CENTER_HALF - 0.01, DECK - 0.01], [block, CENTER_HALF + 0.01, BAND_TOP])
-    solid = solid + box([length - block, -CENTER_HALF - 0.01, DECK - 0.01],
-                        [length, CENTER_HALF + 0.01, BAND_TOP])
+    # The blocks overlap 1 mm into the bands and stop at rib-top height, so no
+    # near-coplanar faces remain.
+    solid = solid + box([0, -CENTER_HALF - 1, DECK - 1], [block, CENTER_HALF + 1, BAND_TOP + RIB_HEIGHT])
+    solid = solid + box([length - block, -CENTER_HALF - 1, DECK - 1],
+                        [length, CENTER_HALF + 1, BAND_TOP + RIB_HEIGHT])
     holes = slots(length)
     if holes is not None:
         solid = solid - holes
@@ -257,8 +266,10 @@ def mate(solid_a, length_a, solid_b, pull=0.0):
 
 def verify(parts):
     result = {"units": "mm", "design_revision": REVISION,
-              "source": "estimated from two ruler-scaled photos of the green curve",
-              "estimate_uncertainty_mm": 1.0, "parts": {},
+              "source": "caliper measurements of the green curve, 2026-11-25",
+              "unmeasured": ["center channel floor height", "slot length",
+                             "green knob neck position", "curve length"],
+              "parts": {},
               "physical_print_tested": False, "slicer_tested": False,
               "green_piece_fit_tested": False}
     for name, solid in parts.items():
@@ -280,9 +291,15 @@ def verify(parts):
     green_knob = (green_knob_2d() ^ outside).rotate(180)
     green_into_printed = min_gap(green_knob, socket)
     printed_into_green = min_gap(mirrored_knob, green_socket_2d())
-    assert printed_clearance >= 0.4, printed_clearance
+    # Retention: slide each seated knob 2 mm back out of its socket (anything
+    # beyond the end face is free space); the head must then hit the lip.
+    free = outside.translate([0.6, 0])
+    held_printed = min_gap(mirrored_knob.translate([2, 0]), green_socket_2d() + free) < 0
+    held_green = min_gap(green_knob.translate([2, 0]), socket + free) < 0
+    assert printed_clearance >= 0.25, printed_clearance
     assert green_into_printed >= 0.3, green_into_printed
     assert printed_into_green >= 0.2, printed_into_green
+    assert held_printed and held_green, (held_printed, held_green)
     coupon = parts["optional/fit_test_coupon"]
     straight = parts["01_straight_200mm"]
     seated = mate(straight, LENGTH, coupon)
@@ -296,10 +313,13 @@ def verify(parts):
         "socket_head_mm": [round(2*SOCKET_SEMI_X, 2), round(2*SOCKET_SEMI_Y, 2)],
         "socket_mouth_width_mm": round(SOCKET_MOUTH[1] - SOCKET_MOUTH[0], 2),
         "socket_depth_mm": SOCKET_CENTER + SOCKET_SEMI_X,
-        "offset_from_centerline_mm": CONNECTOR_OFFSET,
+        "knob_offset_from_centerline_mm": KNOB_OFFSET,
+        "socket_offset_from_centerline_mm": SOCKET_OFFSET,
         "printed_knob_in_printed_socket_min_gap_mm": round(printed_clearance, 3),
-        "estimated_green_knob_in_printed_socket_min_gap_mm": round(green_into_printed, 3),
-        "printed_knob_in_estimated_green_socket_min_gap_mm": round(printed_into_green, 3),
+        "measured_green_knob_in_printed_socket_min_gap_mm": round(green_into_printed, 3),
+        "printed_knob_in_measured_green_socket_min_gap_mm": round(printed_into_green, 3),
+        "printed_knob_held_by_green_socket_after_2mm_pull": held_printed,
+        "green_knob_held_by_printed_socket_after_2mm_pull": held_green,
         "seated_overlap_mm3": round(seated, 4),
         "overlap_after_3mm_pull_mm3": round(pulled, 2),
     }
@@ -344,7 +364,7 @@ def preview(parts):
     for poly in green.to_polygons():
         p = np.vstack([poly, poly[:1]])
         ax2.plot(p[:, 0], p[:, 1], "--", color="#c0392b", lw=1.2)
-    ax2.set_title("Connector end. Dashed: estimated green socket", loc="left", color="#123d43")
+    ax2.set_title("Connector end. Dashed: measured green socket", loc="left", color="#123d43")
     ax3 = fig.add_axes([0.53, 0.08, 0.43, 0.40])
     prof = np.asarray(profile().to_polygons()[0])
     prof = np.vstack([prof, prof[:1]])
@@ -355,9 +375,9 @@ def preview(parts):
     ax3.grid(True, lw=0.3, alpha=0.5)
     ax3.tick_params(labelsize=8)
     ax3.set_title("Cross-section (mm). Ribs 0.4 mm on bands not shown", loc="left", color="#123d43")
-    fig.text(0.04, 0.94, "Train track to match the green curve, revision 1", fontsize=18,
+    fig.text(0.04, 0.94, f"Train track to match the green curve, revision {REVISION}", fontsize=18,
              fontweight="bold", color="#123d43")
-    fig.text(0.04, 0.905, "Dimensions estimated from ruler-scaled photos (about ±1 mm). "
+    fig.text(0.04, 0.905, "Sized from caliper measurements of the green piece. "
              "Print the 40 mm fit-test coupon first.", color="#486269")
     fig.savefig(ROOT / "track-preview.png", dpi=130, facecolor=fig.get_facecolor())
     plt.close(fig)

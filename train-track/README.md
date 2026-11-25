@@ -8,87 +8,79 @@ narrower.
 
 ![Track preview](track-preview.png)
 
-**Revision 1. The dimensions are estimates, not measurements of the green piece.**
-They come from two phone photos, scaled using a ruler in the frame. Expect errors
-of about ±1 mm. Print the fit-test coupon before the full straight.
+**Revision 2.** It is sized from caliper measurements of the green piece,
+taken on 2026-11-25. Revision 1 was sized from photos, and its coupon missed:
+the green knob would not go into its socket, its knob pulled out of the green
+socket, and the green piece sat higher. Print the revision 2 coupon before the
+full straight.
 
 ## Print files
 
-Download the [revision 1 print pack](train-track-v1-print-pack.zip) or use these
+Download the [revision 2 print pack](train-track-v2-print-pack.zip) or use these
 files directly:
 
 | File | Part |
 |---|---|
-| `print-files/optional/fit_test_coupon.3mf` | 40 mm piece with both connector ends. Print this first (about 17 cm³). |
-| `print-files/01_straight_200mm.3mf` | Straight, 200 mm from end face to end face (229 mm including knobs, about 79 cm³). |
+| `print-files/optional/fit_test_coupon.3mf` | 40 mm piece with both connector ends. Print this first (about 16 cm³). |
+| `print-files/01_straight_200mm.3mf` | Straight, 200 mm from end face to end face (230 mm including knobs, about 73 cm³). |
 
 Print flat, bottom down, in millimeters. The model has no overhangs, so it
-needs no supports. If your printer has elephant's foot,
-correct it in the slicer, because a flared first layer tightens the knob fit.
+needs no supports. If your printer has elephant's foot, correct it in the
+slicer, because a flared first layer tightens the knob fit.
 
 ## Fitting the coupon
 
 1. Drop the coupon's knob into the green piece's socket from above, then the
    green knob into the coupon's socket. Both should drop in with light play and
-   should not pull apart sideways.
-2. Check the step at the joint. The running bands are 8 mm high and the rims 10 mm.
-3. If something is off, measure the green piece with calipers. Edit the
-   constants at the top of `build_track.py` and rebuild:
+   should not pull apart.
+2. Check the step at the joint. The rib tops are 7.5 mm high and the rims 10.5 mm.
+3. If something is off, change the constants at the top of `build_track.py` and
+   rebuild:
    - The knob won't go in: reduce `KNOB_SEMI_Y`/`KNOB_SEMI_X`, or narrow `KNOB_NECK`.
    - The green knob won't go in: increase `SOCKET_SEMI_Y`, or widen `SOCKET_MOUTH`.
-   - The connectors don't line up: adjust `CONNECTOR_OFFSET`.
+   - The connectors don't line up: adjust `KNOB_OFFSET` and `SOCKET_OFFSET`.
    - The joint has a step: adjust `BAND_TOP`, `RIM_TOP` or `DECK`.
 
-## How the green piece was measured
+## Measurements of the green piece
 
-- **Scale:** The top-down photo was scaled using the ruler's centimeter labels
-  (6.13 px/mm).
-- **Shape:** The arc was fitted through the eight slot centers, which gives a
-  centerline radius of about 189 mm. The arc is about 60°.
-- **Layout:** The piece was unrolled into straight track coordinates to read its
-  cross-track layout and both ends.
-- **Connectors:** Each end has one knob and one socket, centered about 6 mm
-  either side of the centerline. Looking outward from an end, the knob is on
-  the left. Both ends agree.
-  - Socket: 17.2–18.3 mm across inside, with a 12.4–13.8 mm mouth and about
-    16 mm deep. It has a lip of about 3.5 mm on the centerline side of the
-    mouth and about 1 mm on the outer side.
-  - Knob: it photographs larger than the socket, so its outline is
-    unreliable. The design follows the socket instead.
-- **Magnification correction:** The top of the piece sits about 10 mm above the
-  ruler, so the photo enlarges it slightly. Top-surface sizes were reduced by
-  about 3%.
-- **Height:** The side photo was compared against the printed white track,
-  whose walls are 9.5 mm. That gives running bands of about 8 mm and end blocks
-  or rims of 10–12 mm.
-- **Width:** About 51 mm across the top and 57 mm at the base.
-- **Fit by design:** The printed knob is smaller than the estimated green socket
-  and the printed socket is larger than the green knob. The fit errs toward
-  loose.
+Measured with calipers. Edge distances were taken from the base edge.
 
-An overlay of this model's outline on the unrolled photo matched the green
-socket and fell inside the green knob at both ends.
+| Feature | Measured |
+|---|---|
+| Width | 46 mm across the top, 55 mm at the base |
+| Ribbed bands | 10 mm wide, 7.5 mm high to the rib tops |
+| Rims | 5.5 mm wide, 10.5 mm high |
+| Center channel | 11.5 mm wide, with 9.1 mm slots at a 17.5 mm pitch |
+| Socket | 18.16 mm across, 12.6 mm mouth, 15.7 mm deep; 12 mm from the edge to the hole, 15.2 mm from the edge to the mouth |
+| Knob | 17.8 mm across the ridge tips, 13 mm neck, 16 mm reach, 7.4 mm thick, 12 mm from the edge; ridges about 1.5 mm |
+| Handedness | Knob on the left, looking outward from an end |
+
+From these, the green socket is centered 6.4 mm off the centerline and the
+knob 6.6 mm. The channel floor height, slot length, curve length and the
+neck's position on the knob were not measured. The model keeps 3 mm, 9.5 mm,
+200 mm and an assumed neck position for those.
 
 ## Dimensions
 
 | Feature | Value |
 |---|---|
-| Footprint | 57 mm wide at the base, 52 mm at the top |
-| Running bands | 8 mm high, from 6.5 to 21.5 mm off center, with 0.4 mm ribs |
-| Rims | 10 mm high, 43 mm clear width |
-| Center channel | 13 mm wide, 3 mm floor, 10 × 9.5 mm slots at a 19.2 mm pitch |
-| Knob | 16.2 mm wide head, 11.6 mm neck, reaches 14.6 mm, 7 mm high |
-| Socket | 18.0 mm wide, 13.8 mm mouth, 16.2 mm deep, through the full height |
+| Footprint | 55 mm wide at the base, 46 mm at the top |
+| Running bands | Rib tops at 7.5 mm (7.1 mm band with 0.4 mm ribs), from 5.75 to 16 mm off center |
+| Rims | 10.5 mm high, 5.5 mm flat top with a 1.5 mm bevel to the edge, 32 mm clear width |
+| Center channel | 11.5 mm wide, 3 mm floor, 9.1 × 9.5 mm slots at a 17.5 mm pitch |
+| Knob | 17.5 mm wide head, 12 mm neck, reaches 15.1 mm, 7.2 mm high, 6.4 mm off center |
+| Socket | 18.9 mm wide, 14.3 mm mouth, 16.8 mm deep, 6.6 mm off center, through the full height |
 
 `verification.json` records the digital checks:
 
 - Every part is a single watertight solid.
-- Printed knob in printed socket: at least 0.6 mm of clearance.
-- Estimated green knob in printed socket, and printed knob in estimated green
-  socket: about 0.5 mm and 0.35 mm of clearance.
-- A seated joint has zero overlap.
-- Pulling a seated joint 3 mm apart collides with the socket lip, so joints
-  hold together.
+- Minimum clearances, from the knob's outline to the socket's:
+  - printed knob in printed socket: 0.32 mm
+  - measured green knob in printed socket: 0.32 mm
+  - printed knob in measured green socket: 0.30 mm
+- Pulled 2 mm back out, each knob catches on the lip of the socket it sits in.
+- A seated joint has zero overlap, and pulling it 3 mm apart collides with the
+  lip.
 
 Physical fit, slicing and the fit to the real green piece are untested.
 
