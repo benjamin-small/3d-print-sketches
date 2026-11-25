@@ -1,5 +1,5 @@
 [run]
-source = diamond-art-tray
+source = diamond-art-tray,train-track
 
 [report]
 show_missing = True
