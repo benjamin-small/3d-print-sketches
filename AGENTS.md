@@ -26,7 +26,8 @@ python3 -m venv .venv
 .venv/bin/python -m coverage report
 ```
 
-The coverage gate is 95% of `diamond-art-tray/build_tray.py` statements. Tests
+The coverage gate is 95% of `diamond-art-tray/build_tray.py` and
+`train-track/build_track.py` statements. Tests
 write into temporary directories. See `TESTING.md` for scope and limitations.
 
 For authorized model changes, regenerate from the project directory:

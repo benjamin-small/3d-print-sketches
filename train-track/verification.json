@@ -1,0 +1,71 @@
+{
+  "units": "mm",
+  "design_revision": 2,
+  "source": "caliper measurements of the green curve, 2026-11-25",
+  "unmeasured": [
+    "center channel floor height",
+    "slot length",
+    "green knob neck position",
+    "curve length"
+  ],
+  "parts": {
+    "01_straight_200mm": {
+      "extents_mm": [
+        230.2,
+        55.0,
+        10.5
+      ],
+      "volume_cm3": 72.53,
+      "watertight": true,
+      "single_body": true
+    },
+    "optional/fit_test_coupon": {
+      "extents_mm": [
+        70.2,
+        55.0,
+        10.5
+      ],
+      "volume_cm3": 16.0,
+      "watertight": true,
+      "single_body": true
+    }
+  },
+  "physical_print_tested": false,
+  "slicer_tested": false,
+  "green_piece_fit_tested": false,
+  "connector": {
+    "knob_head_mm": [
+      16.6,
+      17.5
+    ],
+    "knob_neck_width_mm": 12.0,
+    "knob_reach_mm": 15.100000000000001,
+    "knob_height_mm": 7.2,
+    "socket_head_mm": [
+      18.8,
+      18.9
+    ],
+    "socket_mouth_width_mm": 14.3,
+    "socket_depth_mm": 16.8,
+    "knob_offset_from_centerline_mm": 6.4,
+    "socket_offset_from_centerline_mm": 6.6,
+    "printed_knob_in_printed_socket_min_gap_mm": 0.317,
+    "measured_green_knob_in_printed_socket_min_gap_mm": 0.321,
+    "printed_knob_in_measured_green_socket_min_gap_mm": 0.3,
+    "printed_knob_held_by_green_socket_after_2mm_pull": true,
+    "green_knob_held_by_printed_socket_after_2mm_pull": true,
+    "seated_overlap_mm3": 0.0,
+    "overlap_after_3mm_pull_mm3": 102.48
+  },
+  "profile": {
+    "base_width_mm": 55.0,
+    "top_width_mm": 46.0,
+    "rim_height_mm": 10.5,
+    "rim_clear_width_mm": 32.0,
+    "band_height_mm": 7.1,
+    "rib_height_mm": 0.4,
+    "center_channel_width_mm": 11.5,
+    "deck_mm": 3.0,
+    "face_to_face_length_mm": 200.0
+  }
+}

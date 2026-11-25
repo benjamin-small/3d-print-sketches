@@ -10,10 +10,11 @@ python3 -m venv .venv
 .venv/bin/python -m coverage xml
 ```
 
-Measured on 2026-10-13 with Python 3.14.7 and coverage.py 7.16.2: **99.3%
-statement coverage** of `diamond-art-tray/build_tray.py` (422 of 425 statements),
-with **9 passing tests**. The terminal report rounds this to 99%. `.coveragerc`
-requires at least 95%; CI measures the same source and uploads `coverage.xml`.
+Measured on 2026-11-25 with Python 3.14 and coverage.py 7.16.2: **99.4%
+statement coverage** of `diamond-art-tray/build_tray.py` and
+`train-track/build_track.py` together (677 of 681 statements), with **16 passing
+tests**. The terminal report rounds this to 99%. `.coveragerc` requires at least
+95%; CI measures the same sources and uploads `coverage.xml`.
 Re-run the commands and update this baseline when source or test scope changes.
 
 ## Test scope
@@ -34,16 +35,31 @@ Re-run the commands and update this baseline when source or test scope changes.
 Generated test artifacts stay in temporary directories that are removed after
 the suite. Tests read the published revision 7 files but do not rewrite them.
 
+Train track (`tests/test_train_track.py`):
+
+- Rebuild both parts and check they are single watertight bodies with the
+  expected extents.
+- Check knob and socket clearances: printed-to-printed, and printed against the
+  caliper-measured green connector. Check that each knob catches on the socket
+  lip when pulled 2 mm back out.
+- Check that a seated joint has zero overlap and that pulling it 3 mm apart
+  collides. Check end-to-end 180° symmetry and knob-left handedness.
+- Run `main()` into a temporary directory and check the STL, millimeter 3MF,
+  preview and identical print packs. Compare the committed exports with the
+  committed report.
+
 ## Limits
 
 Coverage measures executed Python statements, not proof of printability or every
-possible geometry configuration. The three uncovered statements are two renderer
-guards for off-screen/degenerate projected triangles and the script entrypoint.
+possible geometry configuration. The uncovered statements are two tray renderer guards for
+off-screen/degenerate projected triangles and the two script entrypoints.
 The suite executes `main()` directly, including rendering and packaging.
 
 Tests cover the current default dimensions. They do not validate Bambu Studio or
 OrcaSlicer import/slicing, printer settings, physical fit, warping, durability,
-sorting performance, or an independent OpenSCAD render. These require separate
+sorting performance, or an independent OpenSCAD render. Train-track checks
+against the green piece use caliper measurements; the green knob's neck
+position is assumed, not measured. These require separate
 checks. `physical_print_tested` and `bambu_studio_slice_tested` remain false.
 
 GitHub's `CAD tests` check runs this suite on Linux/Python 3.14 for pull requests
